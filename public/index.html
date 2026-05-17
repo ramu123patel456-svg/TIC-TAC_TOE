@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+
+<style>
+
+/* ================= RESET ================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#0f0f0f;
+    font-family:Arial, Helvetica, sans-serif;
+    overflow:hidden;
+}
+
+/* ================= BACKGROUND GLOW ================= */
+
+body::before{
+    content:"";
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:#00ff99;
+    filter:blur(180px);
+    opacity:0.15;
+    border-radius:50%;
+    top:-120px;
+    left:-120px;
+}
+
+body::after{
+    content:"";
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:#ff0055;
+    filter:blur(180px);
+    opacity:0.12;
+    border-radius:50%;
+    bottom:-120px;
+    right:-120px;
+}
+
+/* ================= CONTAINER ================= */
+
+.container{
+    position:relative;
+    z-index:2;
+    width:430px;
+    background:#171717;
+    border-radius:30px;
+    padding:40px 30px;
+    text-align:center;
+    box-shadow:0 0 40px rgba(0,0,0,0.5);
+}
+
+/* ================= TITLE ================= */
+
+.title{
+    font-size:55px;
+    color:white;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    color:#bdbdbd;
+    margin-bottom:35px;
+    font-size:18px;
+}
+
+/* ================= MENU ================= */
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.btn{
+    border:none;
+    outline:none;
+    padding:18px;
+    border-radius:18px;
+    font-size:22px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.25s;
+}
+
+.btn:hover{
+    transform:translateY(-4px) scale(1.02);
+}
+
+.ai{ background:#00c853; color:white; }
+.friend{ background:#2962ff; color:white; }
+.online{ background:#ff1744; color:white; }
+.settings{ background:#ff9800; color:white; }
+
+/* ================= ONLINE OPTIONS ================= */
+
+.online-options{
+    margin-top:20px;
+    display:none;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option-btn{
+    border:none;
+    padding:15px;
+    border-radius:15px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.option-btn:hover{
+    transform:scale(1.02);
+}
+
+.random{ background:#00c853; color:white; }
+.private{ background:#2962ff; color:white; }
+.back{ background:#555; color:white; }
+
+/* ================= NAME POPUP ================= */
+
+.popup{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.85);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.popup-box{
+    background:#1f1f1f;
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+    width:300px;
+}
+
+.popup-box h2{
+    color:white;
+    margin-bottom:15px;
+}
+
+.popup-box input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    margin-bottom:15px;
+    outline:none;
+}
+
+.popup-box button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#00c853;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    margin-top:30px;
+    color:#777;
+    font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAME POPUP ================= 
+<div id="namePopup" class="popup">
+    <div class="popup-box">
+
+        <h2>Enter Your Name</h2>
+
+        <input type="text" id="nameInput" placeholder="Your Name">
+
+        <button onclick="saveName()">Start Game</button>
+
+    </div>
+</div>
+-->
+
+<!-- ================= MAIN CONTAINER ================= -->
+<div class="container">
+
+    <h1 class="title">Tic Tac Toe</h1>
+
+    <p class="subtitle">Choose Your Game Mode</p>
+
+    <!-- MAIN MENU -->
+    <div class="menu" id="mainMenu">
+
+        <button class="btn ai" onclick="startAI()">🤖 Play With AI</button>
+
+        <button class="btn friend" onclick="startFriend()">👥 Local Friend</button>
+
+        <button class="btn online" onclick="showOnlineOptions()">🌐 Multiplayer Online</button>
+
+        <button class="btn settings">⚙ Settings</button>
+
+    </div>
+
+    <!-- ONLINE OPTIONS -->
+    <div class="online-options" id="onlineOptions">
+
+        <button class="option-btn random" onclick="randomMatch()">⚡ Random Match</button>
+
+        <button class="option-btn private" onclick="privateRoom()">🔒 Private Room</button>
+
+        <button class="option-btn back" onclick="backMenu()">← Back</button>
+
+    </div>
+
+    <div class="footer">
+        Modern Multiplayer Tic Tac Toe
+    </div>
+
+</div>
+
+<script>
+
+const mainMenu = document.getElementById("mainMenu");
+const onlineOptions = document.getElementById("onlineOptions");
+const popup = document.getElementById("namePopup");
+
+// ================= NAME SAVE =================
+
+function saveName(){
+
+    const name = document.getElementById("nameInput").value.trim();
+
+    if(name === ""){
+        alert("Enter your name");
+        return;
+    }
+
+    localStorage.setItem("playerName", name);
+    popup.style.display = "none";
+}
+
+// auto hide if name exists
+window.onload = () => {
+    if(localStorage.getItem("playerName")){
+        popup.style.display = "none";
+    }
+};
+
+// ================= NAVIGATION =================
+
+function startAI(){
+    window.location.href = "ai.html";
+}
+
+function startFriend(){
+    window.location.href = "friend.html";
+}
+
+function showOnlineOptions(){
+    mainMenu.style.display = "none";
+    onlineOptions.style.display = "flex";
+}
+
+function backMenu(){
+    onlineOptions.style.display = "none";
+    mainMenu.style.display = "flex";
+}
+
+function randomMatch(){
+    window.location.href =
+        "https://backend-jd2r.onrender.com";
+}
+
+function privateRoom(){
+    window.location.href = "room.html";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Private Room</title>
+
+    <link rel="stylesheet" href="css/game.css">
+
+    <style>
+
+        .room-box{
+
+            margin-top:30px;
+
+            display:flex;
+
+            flex-direction:column;
+
+            gap:20px;
+        }
+
+        input{
+
+            padding:15px;
+
+            font-size:20px;
+
+            border:none;
+
+            border-radius:12px;
+
+            outline:none;
+        }
+
+        button{
+
+            padding:15px;
+
+            font-size:20px;
+
+            border:none;
+
+            border-radius:12px;
+
+            cursor:pointer;
+
+            font-weight:bold;
+        }
+
+        .create{
+
+            background:#00c853;
+
+            color:white;
+        }
+
+        .join{
+
+            background:#2962ff;
+
+            color:white;
+        }
+
+        .back{
+
+            background:#ff1744;
+
+            color:white;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Private Room</h1>
+
+    <p id="status">
+        Create or Join Room
+    </p>
+
+    <div class="room-box">
+
+        <input type="text"
+               id="roomInput"
+               placeholder="Enter Room Code">
+
+        <button class="create"
+                onclick="createRoom()">
+
+            Create Room
+
+        </button>
+
+        <button class="join"
+                onclick="joinRoom()">
+
+            Join Room
+
+        </button>
+
+        <button class="back"
+                onclick="goBack()">
+
+            Back
+
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+function createRoom(){
+
+    const room =
+        Math.random()
+        .toString(36)
+        .substring(2,8)
+        .toUpperCase();
+
+    localStorage.setItem(
+        "roomCode",
+        room
+    );
+
+    alert(
+        "Room Code : " + room
+    );
+
+    window.location.href =
+        "Private.html";
+}
+
+function joinRoom(){
+
+    const room =
+        document
+        .getElementById("roomInput")
+        .value;
+
+    if(room === ""){
+
+        alert("Enter Room Code");
+
+        return;
+    }
+
+    localStorage.setItem(
+        "roomCode",
+        room
+    );
+
+    window.location.href =
+        "Private.html";
+}
+
+function goBack(){
+
+    window.location.href =
+        "index.html";
+}
+
+</script>
+
+</body>
+
+</html>
